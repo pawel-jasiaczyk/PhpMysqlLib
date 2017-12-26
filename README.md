@@ -8,4 +8,4 @@ Come back and check it next month.
 
 # Reqirements
 
-**PHP 7.1** - library uses strict mode and nullable return values.
+**PHP 7.1** - library uses strict mode, type declarations and nullable return values.
