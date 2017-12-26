@@ -132,6 +132,14 @@ class DataType
     }
 
 
+    public function fullValidation() : bool
+    {
+        $this->validateDataType( $this->dataType );
+        $this->validateSetParams();
+        return $this->isFullValid;
+    }
+
+
     #endregion
     //------------------------------------------------------------------------------------------------------------------
 
@@ -139,12 +147,6 @@ class DataType
     //------------------------------------------------------------------------------------------------------------------
     #region Private Methods
 
-    private function fullValidation() : bool
-    {
-        $this->validateDataType( $this->dataType );
-        $this->validateSetParams();
-        return $this->isFullValid;
-    }
 
 
     private function validateDataType( string $dataType ) : bool
