@@ -7,9 +7,15 @@ class DataType
     #region Private fields
 
     private $dataType;
-    private $isValid;
     private $paramOne;
     private $paramTwo;
+
+    private $numberOfParams;
+    private $requiredNumberOfParams;
+    // determine if object is valid set for SELECT, INSERT and UPDATE operations
+    private $isValid;
+    // determine if object is valid set for CREATE TABLE operations
+    private $isFullValid;
 
 
     #endregion
@@ -19,14 +25,21 @@ class DataType
     //------------------------------------------------------------------------------------------------------------------
     #region Accessors
     
-    public function setDataTypeFromString( string $dataType, int $paramOne = -1, int $paramTwo = -1 )
+    #region DataType
+    public function setDataTypeFromString( string $dataType ) 
     {
-        // TODO
-        // Add validation here
-        $this->isValid = TRUE;
-        $this->dataType = $dataType;
-        $this->paramOne = $paramOne;
-        $this->paramTwo = $paramTwo;
+        $this->insideSetDataTypeFromString( $dataType, TRUE );
+    }
+
+
+    private function insideSetDataTypeFromString( string $dataType, bool $validate ) : bool
+    {
+        $this->validateDataType( $dataType );
+        if( $this->isValid )
+            $this->dataType = $dataType;
+        if( $validate )    
+            $this->fullValidation();
+        return $this->isValid;
     }
 
 
@@ -37,11 +50,41 @@ class DataType
         else
             return "";
     }
+    #endregion
+
+    #region ParamOne
+    public function setParamOne( int $paramOne )
+    {
+        $this->insideSetParamOne( $paramOne, TRUE );
+    }
+
+
+    private function insideSetParamOne( int $paramOne, bool $validate )
+    {
+        $this->paramOne = $paramOne;
+        if( $validate )
+            $this->validateParams();
+    }
 
 
     public function getParamOne()
     {
         return $this->paramOne;
+    }
+    #endregion
+
+    #region ParamTwo
+    public function setParamTwo( int $paramTwo )
+    {
+        $this->insideSetParamTwo( $paramTwo, TRUE );
+    }
+
+
+    private function insideSetParamTwo( int $paramTwo, bool $validate )
+    {
+        $this->paramTwo = $paramTwo;
+        if( $validate )
+            $this->validateParams();
     }
 
 
@@ -49,15 +92,97 @@ class DataType
     {
         return $this->paramTwo;
     }
+    #endregion
 
 
-    public function isValid() : boolean
+    public function isValid() : bool
     {
         return $this->isValid;
     }
 
 
+    public function isFullValid() : bool
+    {
+        return $this->isFullValid;
+    }
+
+
+    public function getNumberOfParams()
+    {
+        return $this->numberOfParams;
+    }
+
+
     #endregion    
+    //------------------------------------------------------------------------------------------------------------------
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    #region Public Methods
+
+    public function setAllParams( string $dataType, int $paramOne = -1, int $paramTwo = -1 ) : bool
+    {
+        $this->insideSetDataTypeFromString( $dataType, FALSE );
+
+        // Set both params without validation
+        $this->insideSetParamOne( $paramOne, FALSE );
+        $this->insideSetParamTwo( $paramTwo, FALSE );
+        // Validate params
+        return $this->fullValidation();
+    }
+
+
+    #endregion
+    //------------------------------------------------------------------------------------------------------------------
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    #region Private Methods
+
+    private function fullValidation() : bool
+    {
+        $this->validateDataType( $this->dataType );
+        $this->validateSetParams();
+        return $this->isFullValid;
+    }
+
+
+    private function validateDataType( string $dataType ) : bool
+    {
+        // TODO set validate here
+        $this->requiredNumberOfParams = 0;
+        $this->isValid = TRUE;
+        return $this->isValid;
+    }
+
+
+    private function validateParams( int $paramOne, int $paramTwo ) : bool
+    {
+        $numberOfParams = 0;
+        $this->isFullValid = FALSE;
+        if( $paramOne >= 0 && $paramTwo >= 0 )
+            $numberOfParams = 2;
+        elseif( $paramOne >= 0 )
+            $numberOfParams = 1;
+        else
+            $numberOfParams = 0;
+
+        if( $numberOfParams >= $this->requiredNumberOfParams )
+        {    
+            $this->isFullValid = TRUE;
+            $this->numberOfParams = $numberOfParams;
+        }
+        return $this->isFullValid;
+    }
+    
+
+    private function validateSetParams() : bool
+    {
+        return $this->validateParams( $this->paramOne, $this->paramTwo );
+    }
+
+
+    #endregion
     //------------------------------------------------------------------------------------------------------------------
 
 
@@ -67,7 +192,7 @@ class DataType
     public function __construct( string $dataType, int $paramOne = -1, int $paramTwo = -1 )
     {
         $this->isValid = FALSE;
-        $this->setDataTypeFromString( $dataType, $paramOne, $paramTwo );
+        $this->setAllParams( $dataType, $paramOne, $paramTwo );
     }
 
 
@@ -83,7 +208,9 @@ class DataType
         $result = "[ dataType = $this->dataType, ";
         $result .= "paramOne = $this->paramOne, ";
         $result .= "paramTwo = $this->paramTwo, ";
-        $result .= "isValid = $this->isValid ]";
+        $result .= "numberOfParams = $this->numberOfParams ";
+        $result .= "isValid = $this->isValid, ";
+        $result .= "isFullValid = $this->isFullValid ]";
 
         return $result;
     }
