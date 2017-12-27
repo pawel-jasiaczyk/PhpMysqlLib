@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 namespace PhpMysqlLib;
+require_once( 'includes.inc' );
 
-class DataType
+class DataType implements IValidatable
 {
     //------------------------------------------------------------------------------------------------------------------
     #region Private fields
@@ -133,14 +134,6 @@ class DataType
     }
 
 
-    public function fullValidation() : bool
-    {
-        $this->validateDataType( $this->dataType );
-        $this->validateSetParams();
-        return $this->isFullValid;
-    }
-
-
     #endregion
     //------------------------------------------------------------------------------------------------------------------
 
@@ -198,6 +191,38 @@ class DataType
         $this->setAllParams( $dataType, $paramOne, $paramTwo );
     }
 
+
+    #endregion
+    //------------------------------------------------------------------------------------------------------------------
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    #region IValidatable implemetation
+
+    // isValid() implemented in Accesors section
+    // isFullValid implemented in Accesors section
+
+    public function fullValidation() : bool
+    {
+        $this->validateDataType( $this->dataType );
+        $this->validateSetParams();
+        return $this->isFullValid;
+    }
+
+    public function validationReport( 
+        bool $showOnlyInvalid = FALSE, 
+        bool $showOnlyFullInvalid = FALSE 
+        ) : string
+    {
+        $result = "["; 
+        $result .= " class = " . get_class( $this );
+        $result .= ", dataType = " . $this->getDataTypeString() ; 
+        $result .= ", isValid = " . $this->isValid();
+        $result .= ", isFullValid = " . $this->isFullValid();
+        $result .= " ]";
+
+        return $result;
+    }
 
     #endregion
     //------------------------------------------------------------------------------------------------------------------
