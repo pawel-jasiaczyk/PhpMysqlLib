@@ -13,6 +13,7 @@ class Table
     private $columns;
 
     private $numberOfColumns;
+    private $isValid;
 
 
     #endregion
@@ -22,7 +23,7 @@ class Table
     //------------------------------------------------------------------------------------------------------------------
     #region Accessors
 
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -30,7 +31,15 @@ class Table
 
     public function setName( string $name )
     {
+        $this->internalSetName( $name, TRUE );
+    }
+
+
+    private function internalSetName( string $name, bool $validate )
+    {
         $this->name = $name;
+        if( $validate )
+            $this->fullValidation();
     }
 
 
@@ -40,6 +49,16 @@ class Table
 
     //------------------------------------------------------------------------------------------------------------------
     #region Public Methods
+
+    public function fullValidation() : bool
+    {
+        if( Helper::validateTableName( $this->name ) )
+            $this->isValid = TRUE;
+        else
+            $this->isValid = FALSE;    
+        return $this->isValid;
+    }
+
 
     public function addColumn( Column $column) : bool
     {
@@ -112,6 +131,7 @@ class Table
         return NULL;
     }
 
+
     #endregion
     //------------------------------------------------------------------------------------------------------------------
 
@@ -128,7 +148,7 @@ class Table
     public function __construct( string $name )
     {
         $this->columns = array();
-        $this->name = $name;
+        $this->setName( $name );
     }
 
     #endregion
