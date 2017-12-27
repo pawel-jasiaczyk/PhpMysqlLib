@@ -25,5 +25,5 @@ interface IValidatable
      * @param bool $showOnlyInvalid determines if report will show all stautses, or only invalid
      * @return string names, statuses and childs statuses.
      */
-    public function validationReport( bool $showOnlyInvalid ) : string;
+    public function validationReport(  bool $showOnlyInvalid, bool $showOnlyFullInvalid ) : string;
 }
