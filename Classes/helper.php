@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace PhpMysqlLib;
 
+/**
+ * An container for static help methods
+ */
 class Helper
 {
     /**
