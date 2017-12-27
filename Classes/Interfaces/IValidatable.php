@@ -22,7 +22,8 @@ interface IValidatable
     public function fullValidation() : bool;
     /**
      * return report of class validation including reports of internal objects(hierarchicaly).
-     * @param bool $showOnlyInvalid determines if report will show all stautses, or only invalid
+     * @param bool $showOnlyInvalid determines if report will show all child stautses, or only invalid
+     * @param bool $showOnlyFullInvalid determines if report will show all child statuses, or only full invalid
      * @return string names, statuses and childs statuses.
      */
     public function validationReport(  bool $showOnlyInvalid, bool $showOnlyFullInvalid ) : string;
